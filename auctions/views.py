@@ -4,12 +4,44 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 
-from .models import User
+from .models import User, Listing
+from .forms import NewListingForm
 
 
 def index(request):
-    return render(request, "auctions/index.html")
+    return render(request, "auctions/index.html", {
+        "listings" : Listing.objects.all()
+    })
 
+def create(request):
+    if request.method == "POST":
+        
+        form = NewListingForm(request.POST or None, request.FILES or None)
+
+        if form.is_valid():
+
+            form = form.save(commit=False)
+            form.seller = request.user
+            form.save()
+            return HttpResponseRedirect(reverse("index"))
+        else:
+            return render(request, "auctions/create.html", {
+                "form" : form
+            })      
+    
+    else:
+        return render(request, "auctions/create.html", {
+            "form" : NewListingForm()
+        })
+
+def watchlist(request):
+    return render(request, "auctions/watchlist.html")
+
+def categories(request):
+    return render(request, "auctions/categories.html")
+
+def listing(request):
+    return render(request, "auctions/listing.html")
 
 def login_view(request):
     if request.method == "POST":
