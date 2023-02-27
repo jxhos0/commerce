@@ -3,5 +3,39 @@
 {% block body %}
     <h2>Categories</h2>
 
-    TODO
+    <div class="listing-row">
+        <label>Choose a category to filter by: </label>
+        <form action="{% url 'categories' %}" method="get">       
+            <select name="filter" onchange="this.form.submit()">
+                <option selected disabled>-----------</option>
+                {% for category in categories %}
+                <option value="{{ category.id }}">{{ category }}</option>
+                {% endfor %}
+            </select>
+        </form>
+    </div>
+   
+    <div>
+        {% for listing in listings %}
+        <a class="nav-link" href="{% url 'listing' listing.id %}">
+            <div class="listing-row">
+                <div>
+                    <p> IMG</p>
+                </div>
+                <div>
+                    {{ listing.title }} <br>
+                    {{ listing.description }} <br>
+                    {{ listing.seller }} <br>
+                    {{ listing.end_dateTime }}
+                </div>
+            </div>
+            <br>
+        </a>
+        {% empty %}
+        <p>There are no listings in this category</p>
+    
+        {% endfor %}
+    </div>
+
+
 {% endblock %}

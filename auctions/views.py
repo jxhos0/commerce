@@ -4,8 +4,11 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 
-from .models import User, Listing
+
+from .models import User, Listing, Category
 from .forms import NewListingForm
+
+import datetime
 
 
 def index(request):
@@ -19,9 +22,9 @@ def create(request):
         form = NewListingForm(request.POST or None, request.FILES or None)
 
         if form.is_valid():
-
             form = form.save(commit=False)
             form.seller = request.user
+            form.end_dateTime = datetime.datetime.now() + datetime.timedelta(days=int(request.POST.get('auction_duration')))
             form.save()
             return HttpResponseRedirect(reverse("index"))
         else:
@@ -38,10 +41,30 @@ def watchlist(request):
     return render(request, "auctions/watchlist.html")
 
 def categories(request):
-    return render(request, "auctions/categories.html")
+    if request.GET.get("filter"):
+        category_filter = request.GET.get("filter")
 
-def listing(request):
-    return render(request, "auctions/listing.html")
+        print(category_filter)
+
+        filtered_listings = Listing.objects.filter(category = category_filter)
+
+        return render(request, "auctions/categories.html",   {
+            "categories" : Category.objects.all(),
+            "listings" : filtered_listings
+        })
+             
+    
+    else:
+        print("no filter")
+        return render(request, "auctions/categories.html",   {
+            "categories" : Category.objects.all(),
+            "listings" : Listing.objects.all()
+        })
+
+def listing(request, id):
+    return render(request, "auctions/listing.html", {
+        "id" : id
+    })
 
 def login_view(request):
     if request.method == "POST":

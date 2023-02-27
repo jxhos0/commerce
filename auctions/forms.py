@@ -3,7 +3,8 @@ from .models import *
 
 class NewListingForm(forms.ModelForm):
     category = forms.ModelChoiceField(queryset=Category.objects.all())
+    auction_duration = forms.IntegerField()
 
     class Meta:
         model = Listing
-        fields = "__all__"
+        exclude = ['end_dateTime', 'seller']

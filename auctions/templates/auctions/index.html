@@ -4,7 +4,23 @@
     <h2>Active Listings</h2>
 
     {% for listing in listings %}
-        Listing {{ listing.id }}: Title - {{ listing.title }}, Desc - {{ listing.description }}, Seller: {{ listing.seller }} <br>
+        <a class="nav-link" href="{% url 'listing' listing.id %}">
+            <div class="listing-row">
+                <div>
+                    <p> IMG</p>
+                </div>
+                <div>
+                    {{ listing.title }} <br>
+                    {{ listing.description }} <br>
+                    {{ listing.seller }} <br>
+                    {{ listing.end_dateTime }}
+                </div>
+            </div>
+            <br>
+        </a>
+        
+
+        
     {% endfor %}
 
 {% endblock %}
