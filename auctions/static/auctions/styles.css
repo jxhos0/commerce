@@ -10,6 +10,10 @@ input {
     min-width: 20em;
 }
 
+.secondary-hr {
+    width: 85%;
+}
+
 .listing-row {
     display: flex;
     gap: 10em;

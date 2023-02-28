@@ -4,7 +4,7 @@
     <h2>Active Listings</h2>
 
     {% for listing in listings %}
-        <hr>
+        <hr class="secondary-hr">
         <a class="nav-link" href="{% url 'listing' listing.id %}">
             <div class="listing-row">
                 <div>
@@ -20,6 +20,6 @@
         </a>
         
     {% endfor %}
-    <hr>
+    <hr class="secondary-hr">
 
 {% endblock %}

@@ -2,7 +2,6 @@
 
 {% block body %}
     
-
     <div>
         <div class="listing-row">
             <div>
@@ -31,14 +30,21 @@
                 
             </div>
         </div>
-        <br>
+        <hr>
         <div>
-            Description: <br>
+            <H3>Description</H3> <br>
             {{ listing.description }}
         </div>
-        <br>
+        <hr>
         <div>
-            Comments
+            <H3>Comments</H3>
+            {% for comment in comments %}
+                {{comment.comment_text}} <br>
+                asked on {{ comment.comment_dateTime }}
+                <hr>
+            {% empty %}
+                 Currently there are no comments.
+            {% endfor %}
         </div>
 
 
