@@ -5,7 +5,7 @@ from django.shortcuts import render
 from django.urls import reverse
 
 
-from .models import User, Listing, Category
+from .models import User, Listing, Category, Watchlist
 from .forms import NewListingForm
 
 import datetime
@@ -38,13 +38,37 @@ def create(request):
         })
 
 def watchlist(request):
-    return render(request, "auctions/watchlist.html")
+    if request.GET.get("watch_listing"):
+        if "add" in request.GET.get("watch_listing"):
+            listing_id = request.GET.get("watch_listing").replace("add ", "")
+
+            listing = Listing.objects.get(pk=listing_id)
+
+            w = Watchlist(listing=listing, user=request.user)
+            w.save()
+            return render(request, "auctions/index.html", {
+                        "listings" : Listing.objects.all()
+                    })
+        
+        else:
+            listing_id = request.GET.get("watch_listing").replace("remove ", "")
+            listing = Listing.objects.get(pk=listing_id)
+
+            Watchlist.objects.filter(listing=listing).get(user=request.user).delete()
+
+            return render(request, "auctions/watchlist.html", {
+                "watchlist" : Watchlist.objects.filter(user=request.user)
+            })
+    
+    else:
+        return render(request, "auctions/watchlist.html", {
+            "watchlist" : Watchlist.objects.filter(user=request.user)
+        })
+    
 
 def categories(request):
     if request.GET.get("filter"):
         category_filter = request.GET.get("filter")
-
-        print(category_filter)
 
         filtered_listings = Listing.objects.filter(category = category_filter)
 
@@ -53,18 +77,25 @@ def categories(request):
             "listings" : filtered_listings
         })
              
-    
     else:
-        print("no filter")
         return render(request, "auctions/categories.html",   {
             "categories" : Category.objects.all(),
             "listings" : Listing.objects.all()
         })
 
 def listing(request, id):
-    return render(request, "auctions/listing.html", {
-        "id" : id
-    })
+    try :
+        Watchlist.objects.filter(listing=id).get(user=request.user)
+
+        return render(request, "auctions/listing.html", {
+            "listing" : Listing.objects.get(pk=id),
+            "watched" : True
+        })
+
+    except:
+        return render(request, "auctions/listing.html", {
+            "listing" : Listing.objects.get(pk=id)
+        })
 
 def login_view(request):
     if request.method == "POST":

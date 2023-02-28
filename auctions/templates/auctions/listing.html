@@ -1,7 +1,47 @@
 {% extends "auctions/layout.html" %}
 
 {% block body %}
-    <h2>Listing</h2>
+    
 
-    TODO
+    <div>
+        <div class="listing-row">
+            <div>
+                IMG
+            </div>
+            <div>
+                <h2>{{listing.title}}</h2>
+                <hr>
+                Condition : {{ listing.condition }} <br>
+                Time left : Enter Time left | {{  listing.end_dateTime }}
+                <hr>
+                Current bid: <br>
+                Enter bid form here
+                <hr>
+                <form action="{% url 'watchlist' %}" method="get">       
+                    <select name="watch_listing" onchange="this.form.submit()">
+                        {% if watched %}
+                            <option>Listing is in watchlist</option>
+                            <option value="remove {{ listing.id }}">Remove from watchlist</option>
+                        {% else %}
+                            <option>Add to watchlist?</option>
+                            <option value="add {{ listing.id }}">Add to watchlist</option>
+                        {% endif %}
+                    </select>
+                </form>
+                
+            </div>
+        </div>
+        <br>
+        <div>
+            Description: <br>
+            {{ listing.description }}
+        </div>
+        <br>
+        <div>
+            Comments
+        </div>
+
+
+
+    </div>
 {% endblock %}

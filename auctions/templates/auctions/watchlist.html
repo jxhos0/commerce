@@ -3,5 +3,23 @@
 {% block body %}
     <h2>Watchlist</h2>
 
-    TODO
+    {% for item in watchlist %}
+        <hr>
+        <a class="nav-link" href="{% url 'listing' item.listing.id %}">
+            <div class="listing-row">
+                <div>
+                    <p> IMG</p>
+                </div>
+                <div>
+                    {{ item.listing.title }} <br>
+                    {{ item.listing.description }} <br>
+                    {{ item.listing.seller }} <br>
+                    {{ item.listing.end_dateTime }}
+                </div>
+            </div>
+        </a>
+        
+    {% endfor %}
+    <hr>
+
 {% endblock %}

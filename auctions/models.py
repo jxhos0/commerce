@@ -32,7 +32,7 @@ class Listing(models.Model):
     starting_price = models.DecimalField(max_digits=10, decimal_places=2, default=None)
 
     def __str__(self):
-        return f"Title: {self.title}, Description: {self.description}, Listed: {self.start_dateTime}, Ending: {self.end_dateTime}"
+        return f"ID: {self.id}, Title: {self.title}, Description: {self.description}, Listed: {self.start_dateTime}, Ending: {self.end_dateTime}"
 
     
 class Bid(models.Model):
@@ -49,3 +49,10 @@ class Comment(models.Model):
     commenter = models.ForeignKey(User, default=None, null=True, on_delete=models.SET_NULL)
     comment_text = models.TextField(default="")
     comment_dateTime = models.DateTimeField(auto_now_add=True)
+
+class Watchlist(models.Model):
+    listing = models.ForeignKey(Listing, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f"Listing: {self.listing.id}, Title: {self.listing.title}, Watched by {self.user}"

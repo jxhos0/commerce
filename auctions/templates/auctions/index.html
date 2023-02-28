@@ -4,6 +4,7 @@
     <h2>Active Listings</h2>
 
     {% for listing in listings %}
+        <hr>
         <a class="nav-link" href="{% url 'listing' listing.id %}">
             <div class="listing-row">
                 <div>
@@ -16,11 +17,9 @@
                     {{ listing.end_dateTime }}
                 </div>
             </div>
-            <br>
         </a>
         
-
-        
     {% endfor %}
+    <hr>
 
 {% endblock %}
