@@ -3,10 +3,12 @@ from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
+from django.core.validators import MinValueValidator
+from decimal import Decimal
 
 
 from .models import User, Listing, Category, Watchlist, Comment, Bid
-from .forms import NewListingForm
+from .forms import *
 
 import datetime
 
@@ -20,7 +22,7 @@ def create(request):
     if request.method == "POST":
         
         form = NewListingForm(request.POST or None, request.FILES or None)
-
+        
         if form.is_valid():
             form = form.save(commit=False)
             form.seller = request.user
@@ -80,24 +82,70 @@ def categories(request):
         })
 
 def listing(request, id):
+
+    listing = Listing.objects.get(pk=id)
     bids = Bid.objects.filter(listing=id)
     comments = Comment.objects.filter(listing=id)
+
+    if bids.count() > 0:
+        required_bid = bids.latest('bid_amount').bid_amount
+    elif bids.count() == 0:
+        required_bid = listing.starting_price
+
+    initial_bid_data = {
+        "listing" : id,
+        "bidder" : request.user
+    }
+
+    bid_form = NewBid(initial=initial_bid_data)
+
+    bid_form.fields['bid_amount'].label = ""
+    bid_form.fields['bid_amount'].widget.attrs.update(placeholder="Bid amount", min=required_bid+1)
+
+    initial_comment_data = {
+        "listing" : id,
+        "commenter" : request.user
+    }
+
+    comment_form = NewComment(initial=initial_comment_data)
+    comment_form.fields['comment_text'].label = ""
+    comment_form.fields['comment_text'].widget.attrs.update(placeholder="Enter your question here")
+
     try :
         Watchlist.objects.filter(listing=id).get(user=request.user)
 
         return render(request, "auctions/listing.html", {
-            "listing"   : Listing.objects.get(pk=id),
+            "listing"   : listing,
             "watched"   : True,
             "bids"      : bids,
-            "comments"  : comments
+            "required_bid" : required_bid,
+            "bid_form" : bid_form,
+            "comments"  : comments,
+            "comment_form" : comment_form
         })
 
     except:
         return render(request, "auctions/listing.html", {
-            "listing"   : Listing.objects.get(pk=id),
+            "listing"   : listing,
             "bids"      : bids,
-            "comments"  : comments
+            "required_bid" : required_bid,
+            "bid_form" : bid_form,
+            "comments"  : comments,
+            "comment_form" : comment_form
         })
+
+def bid(request):
+    if request.method == "POST":
+        bid_form = NewBid(request.POST)
+        bid_form.save()
+    return HttpResponseRedirect(reverse("index"))
+
+def comment(request):
+    if request.method == "POST":
+        comment_form = NewComment(request.POST)
+        comment_form.save()
+        return HttpResponseRedirect(reverse("index"))
+
 
 def login_view(request):
     if request.method == "POST":

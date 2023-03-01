@@ -13,9 +13,24 @@
                 Condition : {{ listing.condition }} <br>
                 Time left : Enter Time left | {{  listing.end_dateTime }}
                 <hr>
-                Current bid: <br>
-                Enter bid form here
+                {% if bids %}
+                    Current bid: {{ required_bid }}   [{{ bids.count }}]<br>
+
+                {% else %}
+                    Starting Bid: {{ required_bid }} <br>
+
+                {% endif %}
+
+                <form action="{% url 'bid' %}" method="post">
+                    {% csrf_token %}
+                    
+                    {{ bid_form }}
+                  
+                    <input type="submit", value="Place bid">
+            
+                </form>
                 <hr>
+                
                 <form action="{% url 'watchlist' %}" method="get">       
                     <select name="watch_listing" onchange="this.form.submit()">
                         {% if watched %}
@@ -43,8 +58,17 @@
                 asked on {{ comment.comment_dateTime }}
                 <hr>
             {% empty %}
-                 Currently there are no comments.
+                 Currently there are no comments. <br>
             {% endfor %}
+            Have a question of your own? <br>
+            <form action="{% url 'comment' %}" method="post">
+                {% csrf_token %}
+                
+                {{ comment_form }}
+              
+                <input type="submit", value="Submit question">
+        
+            </form>
         </div>
 
 

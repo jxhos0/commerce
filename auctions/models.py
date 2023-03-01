@@ -33,6 +33,7 @@ class Listing(models.Model):
 
     def __str__(self):
         return f"ID: {self.id}, Title: {self.title}, Description: {self.description}, Listed: {self.start_dateTime}, Ending: {self.end_dateTime}"
+    
 
     
 class Bid(models.Model):

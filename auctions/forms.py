@@ -8,3 +8,23 @@ class NewListingForm(forms.ModelForm):
     class Meta:
         model = Listing
         exclude = ['end_dateTime', 'seller']
+
+class NewComment(forms.ModelForm):
+    class Meta:
+        model = Comment
+        fields = "__all__"
+        widgets = {
+            "listing" : forms.HiddenInput(),
+            "commenter" : forms.HiddenInput()
+        }
+
+
+class NewBid(forms.ModelForm):
+    class Meta:
+        model = Bid
+        fields = "__all__"
+        widgets = {
+            "listing" : forms.HiddenInput(),
+            "bidder" : forms.HiddenInput()
+        }
+
