@@ -3,7 +3,7 @@
 {% block body %}
     <h2>Categories</h2>
 
-    <div class="listing-row">
+    <div style="position: relative;">
         <label>Choose a category to filter by: </label>
         <form action="{% url 'categories' %}" method="get">       
             <select name="filter" onchange="this.form.submit()">
@@ -14,13 +14,19 @@
             </select>
         </form>
     </div>
-   
+    <hr>
     <div>
         {% for listing in listings %}
-        <a class="nav-link" href="{% url 'listing' listing.id %}">
+        <a href="{% url 'listing' listing.id %}">
             <div class="listing-row">
                 <div>
-                    <p> IMG</p>
+                    {% if listing.image %}
+                        image
+                    {% else %}
+                        <svg width="200" height="200">       
+                            <image xlink:href="https://upload.wikimedia.org/wikipedia/commons/a/ac/No_image_available.svg" width="200" height="200"/>    
+                        </svg>
+                    {% endif %}
                 </div>
                 <div>
                     {{ listing.title }} <br>
@@ -31,10 +37,12 @@
             </div>
             <br>
         </a>
+        <hr>
         {% empty %}
-        <p>There are no listings in this category</p>
+            <p>There are no listings in this category.</p>
     
         {% endfor %}
+
     </div>
 
 

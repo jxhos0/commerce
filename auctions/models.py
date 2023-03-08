@@ -23,13 +23,15 @@ class Condition(models.Model):
 
 class Listing(models.Model):
     title           = models.CharField(max_length=30)
-    category        = models.ForeignKey(Category, null=True, on_delete=models.SET_NULL)
-    condition       = models.ForeignKey(Condition, null=True, on_delete=models.SET_NULL)
+    category        = models.ForeignKey(Category, blank=True, null=True, on_delete=models.SET_NULL)
+    condition       = models.ForeignKey(Condition, blank=True, null=True, on_delete=models.SET_NULL)
     description     = models.TextField(max_length=300)
+    image           = models.URLField(blank = True, null=True)
     start_dateTime  = models.DateTimeField(auto_now_add=True)
     end_dateTime    = models.DateTimeField(null=True, blank=True)
     seller          = models.ForeignKey(User, on_delete=models.CASCADE)
     starting_price  = models.DecimalField(max_digits=10, decimal_places=2, default=None)
+    is_active       = models.BooleanField(default=True)
 
     def __str__(self):
         return f"ID: {self.id}, Title: {self.title}, Description: {self.description}, Listed: {self.start_dateTime}, Ending: {self.end_dateTime}"

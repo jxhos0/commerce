@@ -8,30 +8,32 @@
         <link href="{% static 'auctions/styles.css' %}" rel="stylesheet">
     </head>
     <body>
-        <h1>Auctions</h1>
-        <div>
-            {% if user.is_authenticated %}
-                Signed in as <strong>{{ user.username }}</strong>.
-            {% else %}
-                Not signed in.
-            {% endif %}
+        <div style="position: relative;">
+            <h1>Auctions</h1>
+            <div style="position:absolute; top:0px; right:0px; text-align: right;">
+                {% if user.is_authenticated %}
+                    Signed in as <strong>{{ user.username }}</strong><br>
+                    <a  href="{% url 'logout' %}">Log Out</a>
+                {% else %}
+                    Not signed in<br>
+                    <a href="{% url 'login' %}">Log In</a>
+                {% endif %}
+            </div>
         </div>
+
         <ul class="nav">
             <li class="nav-item">
                 <a class="nav-link" href="{% url 'index' %}">Active Listings</a>
             </li>
             {% if user.is_authenticated %}
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'create' %}">Create Listing</a>
-                </li>
+                    <a class="nav-link" href="{% url 'categories' %}">Categories</a>
+                </li>            
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'watchlist' %}">Watchlist</a>
-                </li>
+                </li>                
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'categories' %}">Categories</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'logout' %}">Log Out</a>
+                    <a class="nav-link" href="{% url 'create' %}">Create Listing</a>
                 </li>
             {% else %}
                 <li class="nav-item">
@@ -42,7 +44,7 @@
                 </li>
             {% endif %}
         </ul>
-        <hr>
+        <hr style="width: 90vw; position: relative; left: calc(-45vw + 50%);">
         {% block body %}
         {% endblock %}
     </body>

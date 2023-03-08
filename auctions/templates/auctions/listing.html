@@ -1,34 +1,64 @@
 {% extends "auctions/layout.html" %}
+{% load listingtags %}
 
 {% block body %}
-    
+
+    {% if user == listing.seller %}
+        <div style="float: right;">
+            <a href="{% url 'close' listing.id %}">Close Listing</a>
+        </div>
+    {% endif %}
+   
+
     <div>
         <div class="listing-row">
             <div>
-                IMG
+                {% if listing.image %}
+                    <img src="{{ listing.image }}" width="500px" height="500px">
+                {% else %}
+                    <svg width="500" height="500">       
+                        <image xlink:href="https://upload.wikimedia.org/wikipedia/commons/a/ac/No_image_available.svg" width="500" height="500"/>    
+                    </svg>
+                {% endif %}
             </div>
             <div>
+
                 <h2>{{listing.title}}</h2>
-                <hr>
-                Condition : {{ listing.condition }} <br>
-                Time left : Enter Time left | {{  listing.end_dateTime }}
-                <hr>
-                {% if bids %}
-                    Current bid: {{ required_bid }}   [{{ bids.count }}]<br>
+                Seller: {{ listing.seller }}
 
+                <hr>
+                {% if listing.condition %}
+                    Condition : {{ listing.condition }} <br>
                 {% else %}
-                    Starting Bid: {{ required_bid }} <br>
+                    Condition : No listed condition<br>
+                {% endif %} 
 
+                Time left : {{ listing|timeremaining }} | {{  listing|format_endDateTime }}
+                <hr>
+                {% if bids.count == 1 %}
+                    Current bid: ${{ required_bid }}   [{{ bids.count }} bid]<br>
+                {% elif bids.count > 1 %}
+                    Current bid: ${{ required_bid }}   [{{ bids.count }} bids]<br>
+                {% else %}
+                    Starting Bid: ${{ required_bid }} [{{ bids.count }} bids]<br>
                 {% endif %}
 
-                <form action="{% url 'bid' %}" method="post">
-                    {% csrf_token %}
-                    
-                    {{ bid_form }}
-                  
-                    <input type="submit", value="Place bid">
-            
-                </form>
+                {% if user != listing.seller %}
+                    {% if listing.is_active %}
+
+                        <form action="{% url 'bid' %}" method="post">
+                            {% csrf_token %}
+                            
+                            {{ bid_form }}
+                        
+                            <input type="submit", value="Place bid">
+                        </form>
+                    {% else %}
+                        Auction has ended.
+                    {% endif %}
+                {% else %}
+                    You can't bid on your own listing.
+                {% endif %}
                 <hr>
                 
                 <form action="{% url 'watchlist' %}" method="get">       
@@ -60,15 +90,20 @@
             {% empty %}
                  Currently there are no comments. <br>
             {% endfor %}
-            Have a question of your own? <br>
-            <form action="{% url 'comment' %}" method="post">
-                {% csrf_token %}
+            
+            {% if user != listing.seller %}
+                Have a question of your own? <br>
+                <form action="{% url 'comment' %}" method="post">
+                    {% csrf_token %}
+                    
+                    {{ comment_form }}
                 
-                {{ comment_form }}
-              
-                <input type="submit", value="Submit question">
-        
-            </form>
+                    <input type="submit", value="Submit question">
+            
+                </form>
+                
+            {% endif %}
+            
         </div>
 
 

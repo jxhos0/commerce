@@ -2,13 +2,18 @@
 
 {% block body %}
     <h2>Watchlist</h2>
-
+    <hr>
     {% for item in watchlist %}
-        <hr>
-        <a class="nav-link" href="{% url 'listing' item.listing.id %}">
+        <a href="{% url 'listing' item.listing.id %}">
             <div class="listing-row">
                 <div>
-                    <p> IMG</p>
+                    {% if listing.image %}
+                        image
+                    {% else %}
+                        <svg width="200" height="200">       
+                            <image xlink:href="https://upload.wikimedia.org/wikipedia/commons/a/ac/No_image_available.svg" width="200" height="200"/>    
+                        </svg>
+                    {% endif %}
                 </div>
                 <div>
                     {{ item.listing.title }} <br>
@@ -18,8 +23,10 @@
                 </div>
             </div>
         </a>
-        
+        <hr>
+    {% empty  %}
+        You currently are not watching any listings.
     {% endfor %}
-    <hr>
+   
 
 {% endblock %}

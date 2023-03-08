@@ -3,8 +3,9 @@ from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
-from django.core.validators import MinValueValidator
+from django.utils import timezone
 from decimal import Decimal
+
 
 
 from .models import User, Listing, Category, Watchlist, Comment, Bid
@@ -14,8 +15,9 @@ import datetime
 
 
 def index(request):
+    active_check()
     return render(request, "auctions/index.html", {
-        "listings" : Listing.objects.filter(end_dateTime__gte = datetime.datetime.now()).order_by("end_dateTime")
+        "listings" : Listing.objects.filter(is_active = True).order_by("end_dateTime")
     })
 
 def create(request):
@@ -97,17 +99,17 @@ def listing(request, id):
         "bidder" : request.user
     }
 
-    bid_form = NewBid(initial=initial_bid_data)
+    bid_form = NewBidForm(initial=initial_bid_data)
 
     bid_form.fields['bid_amount'].label = ""
-    bid_form.fields['bid_amount'].widget.attrs.update(placeholder="Bid amount", min=required_bid+1)
+    bid_form.fields['bid_amount'].widget.attrs.update(placeholder="Bid amount", min=required_bid+Decimal(0.01))
 
     initial_comment_data = {
         "listing" : id,
         "commenter" : request.user
     }
 
-    comment_form = NewComment(initial=initial_comment_data)
+    comment_form = NewCommentForm(initial=initial_comment_data)
     comment_form.fields['comment_text'].label = ""
     comment_form.fields['comment_text'].widget.attrs.update(placeholder="Enter your question here")
 
@@ -136,16 +138,42 @@ def listing(request, id):
 
 def bid(request):
     if request.method == "POST":
-        bid_form = NewBid(request.POST)
+        bid_form = NewBidForm(request.POST)
         bid_form.save()
     return HttpResponseRedirect(reverse("index"))
 
 def comment(request):
     if request.method == "POST":
-        comment_form = NewComment(request.POST)
+        comment_form = NewCommentForm(request.POST)
         comment_form.save()
         return HttpResponseRedirect(reverse("index"))
 
+def close(request, id):
+    if request.method == "POST":
+        listing = Listing.objects.get(pk=id)
+
+        if 'close' in request.POST:
+            listing.is_active = False
+            listing.save()
+
+            return HttpResponseRedirect(reverse("index"))
+            
+        else:
+            return HttpResponseRedirect(reverse("index"))
+            
+    else:
+        return render(request,"auctions/close.html", {
+            "listing" : Listing.objects.get(pk=id)
+        })
+
+def active_check():
+    listings = Listing.objects.filter(is_active = True)
+
+    for listing in listings:
+        if not listing.end_dateTime >= timezone.now():
+            listing.is_active = False
+            listing.save()
+    
 
 def login_view(request):
     if request.method == "POST":

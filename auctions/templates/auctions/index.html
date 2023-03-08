@@ -1,25 +1,39 @@
 {% extends "auctions/layout.html" %}
+{% load listingtags %}
 
 {% block body %}
     <h2>Active Listings</h2>
-
+    <hr>
     {% for listing in listings %}
-        <hr class="secondary-hr">
-        <a class="nav-link" href="{% url 'listing' listing.id %}">
+        <a href="{% url 'listing' listing.id %}">
             <div class="listing-row">
-                <div>
-                    <p> IMG</p>
+                <div class="listing-row-img">
+                    {% if listing.image %}
+                        <img src="{{ listing.image }}" width="200" height="200">
+                    {% else %}
+                        <svg width="200" height="200">       
+                            <image xlink:href="https://upload.wikimedia.org/wikipedia/commons/a/ac/No_image_available.svg" width="200" height="200"/>    
+                        </svg>
+                    {% endif %}
                 </div>
-                <div>
-                    {{ listing.title }} <br>
-                    {{ listing.description }} <br>
-                    {{ listing.seller }} <br>
-                    {{ listing.end_dateTime }}
+                <div class="listing-row-details">
+                    <H4>{{ listing.title }}</H4>
+                    <div class="listing-row-description">
+                        Price: ${{ listing|current_price }}<br>
+                        {{ listing.description }} <br>
+                    </div>
+                    <div class="listing-row-auction-details">
+                        {{ listing|bid_count }}               <br>
+                        {{ listing|timeremaining }}<br>
+                        Sold by: {{ listing.seller }} <br>
+                    </div>
                 </div>
             </div>
         </a>
-        
+        <hr>
+    {% empty %}
+        Currently there are no active listings.
     {% endfor %}
-    <hr class="secondary-hr">
+    
 
 {% endblock %}
