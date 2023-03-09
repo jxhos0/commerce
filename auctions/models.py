@@ -29,9 +29,10 @@ class Listing(models.Model):
     image           = models.URLField(blank = True, null=True)
     start_dateTime  = models.DateTimeField(auto_now_add=True)
     end_dateTime    = models.DateTimeField(null=True, blank=True)
-    seller          = models.ForeignKey(User, on_delete=models.CASCADE)
+    seller          = models.ForeignKey(User, on_delete=models.CASCADE, related_name="seller")
     starting_price  = models.DecimalField(max_digits=10, decimal_places=2, default=None)
     is_active       = models.BooleanField(default=True)
+    winner          = models.ForeignKey(User, blank=True, default=None, null=True, on_delete=models.SET_NULL, related_name="winner")
 
     def __str__(self):
         return f"ID: {self.id}, Title: {self.title}, Description: {self.description}, Listed: {self.start_dateTime}, Ending: {self.end_dateTime}"

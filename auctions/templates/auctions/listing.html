@@ -3,7 +3,19 @@
 
 {% block body %}
 
-    {% if user == listing.seller %}
+
+    {% if user == listing.winner %}
+        <H2>You have won the auction!</H2>
+    {% elif user == listing.seller and listing.winner %}
+        <H2>{{ listing.winner }} won your auction!</H2>
+    {% elif user == listing.seller and not listing.winner %}
+        <H2>Your item did not sell. Would you like to relist?</H2>
+    {% elif not listing.winner %}
+        <H2>Auction has ended</H2>
+    {% endif %}
+
+
+    {% if user == listing.seller and listing.is_active %}
         <div style="float: right;">
             <a href="{% url 'close' listing.id %}">Close Listing</a>
         </div>
@@ -11,7 +23,7 @@
    
 
     <div>
-        <div class="listing-row">
+        <div class="">
             <div>
                 {% if listing.image %}
                     <img src="{{ listing.image }}" width="500px" height="500px">
@@ -28,12 +40,16 @@
 
                 <hr>
                 {% if listing.condition %}
-                    Condition : {{ listing.condition }} <br>
+                    Condition: {{ listing.condition }} <br>
                 {% else %}
-                    Condition : No listed condition<br>
+                    Condition: No listed condition<br>
                 {% endif %} 
 
-                Time left : {{ listing|timeremaining }} | {{  listing|format_endDateTime }}
+                {% if listing.is_active %}
+                    Time left: {{ listing|timeremaining }} | {{  listing|format_endDateTime }}
+                {% else %}
+                    Time left: Ended
+                {% endif %}
                 <hr>
                 {% if bids.count == 1 %}
                     Current bid: ${{ required_bid }}   [{{ bids.count }} bid]<br>
@@ -43,8 +59,8 @@
                     Starting Bid: ${{ required_bid }} [{{ bids.count }} bids]<br>
                 {% endif %}
 
-                {% if user != listing.seller %}
-                    {% if listing.is_active %}
+                {% if listing.is_active %}
+                    {% if user != listing.seller %}
 
                         <form action="{% url 'bid' %}" method="post">
                             {% csrf_token %}
@@ -54,10 +70,10 @@
                             <input type="submit", value="Place bid">
                         </form>
                     {% else %}
-                        Auction has ended.
+                        You can't bid on your own listing.
                     {% endif %}
                 {% else %}
-                    You can't bid on your own listing.
+                    Auction has ended.
                 {% endif %}
                 <hr>
                 

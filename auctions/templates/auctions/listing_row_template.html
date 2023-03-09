@@ -1,0 +1,36 @@
+{% load listingtags %}
+<div class="listing-container">
+    <a href="{% url 'listing' listing.id %}">
+        <div class="listing-grid">
+            <div>
+                {% if listing.image %}
+                    <img src="{{ listing.image }}" class="listing-img">
+                {% else %}
+                    <img src="https://us.123rf.com/450wm/pavelstasevich/pavelstasevich1811/pavelstasevich181101032/112815935-no-image-available-icon-flat-vector-illustration.jpg?ver=6" class="listing-img">
+                    
+                {% endif %}
+            </div>
+            <div class="listing-details grid-col-span-4">
+                <H4>{{ listing.title }}</H4>
+                <div class="listing-details-sections">
+                    <div class="listing-row-description">
+                        Price: ${{ listing|current_price }}<br><br>
+                        Description:<br>
+                        {{ listing.description }} <br>
+                    </div>
+                
+                    <div class="listing-auction-details">
+                        {{ listing|bid_count }}               <br>
+                        {% if listing.is_active %}
+                            {{ listing|timeremaining }}
+                        {% else %}
+                            Ended
+                        {% endif %}<br>
+                        Seller: {{ listing.seller }} <br>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </a>
+</div>
+<hr>

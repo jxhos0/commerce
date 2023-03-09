@@ -6,7 +6,7 @@ class NewListingForm(forms.ModelForm):
 
     class Meta:
         model = Listing
-        exclude = ['end_dateTime', 'seller', 'is_active']
+        exclude = ['end_dateTime', 'seller', 'is_active', 'winner']
 
 class NewCommentForm(forms.ModelForm):
     class Meta:

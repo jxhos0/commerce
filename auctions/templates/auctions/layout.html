@@ -21,30 +21,28 @@
             </div>
         </div>
 
-        <ul class="nav">
+        <ul class="nav justify-content-center">
             <li class="nav-item">
                 <a class="nav-link" href="{% url 'index' %}">Active Listings</a>
             </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'index' %}?id='all'">All Listings</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'categories' %}">Categories</a>
+            </li> 
             {% if user.is_authenticated %}
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'categories' %}">Categories</a>
-                </li>            
+                           
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'watchlist' %}">Watchlist</a>
                 </li>                
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'create' %}">Create Listing</a>
                 </li>
-            {% else %}
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'login' %}">Log In</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'register' %}">Register</a>
-                </li>
+
             {% endif %}
         </ul>
-        <hr style="width: 90vw; position: relative; left: calc(-45vw + 50%);">
+        <hr style="width: 120%; position: relative; left: -10%;">
         {% block body %}
         {% endblock %}
     </body>

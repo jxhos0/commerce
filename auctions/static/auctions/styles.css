@@ -1,8 +1,7 @@
 body {
     padding: 10px;
-    max-width: 70%;
-    margin: auto;
-    
+    max-width: 1248px;
+    margin: auto; 
 }
 
 label {
@@ -13,11 +12,40 @@ input {
     min-width: 20em;
 }
 
+img, picture, svg {
+    max-width: 100%;
+    max-height: 100%;
+    display: block;
+}
+/* 
+a:link {color: black;text-decoration: none;}
+a:visited {color: black;text-decoration: none;}
+a:hover {color: black;text-decoration: none;}
+a:active {color: black;text-decoration: none;} */
+
 .secondary-hr {
     width: 85%;
 }
 
-.listing-row {
-    display: flex;
-    gap: 10em;
+.grid-col-span-4 {
+    grid-column: span 4;
+}
+
+.listing-grid {
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: repeat(5, 1fr);
+    min-height: 150px;
+}
+
+.listing-details-sections {
+    display: grid;
+    gap: 0.5rem;
+    grid-template-columns: repeat(2, 1fr);
+}
+
+.listing-img {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    object-fit: contain;
 }

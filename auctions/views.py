@@ -4,6 +4,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 from django.utils import timezone
+from django.contrib.auth.decorators import login_required
 from decimal import Decimal
 
 
@@ -16,10 +17,18 @@ import datetime
 
 def index(request):
     active_check()
-    return render(request, "auctions/index.html", {
-        "listings" : Listing.objects.filter(is_active = True).order_by("end_dateTime")
-    })
+    if not request.GET:
+        return render(request, "auctions/index.html", {
+            "title" : "Active Listings",
+            "listings" : Listing.objects.filter(is_active = True).order_by("end_dateTime")
+        })
+    else:
+        return render(request, "auctions/index.html", {
+            "title" : "All Listings",
+            "listings" : Listing.objects.all().order_by("-end_dateTime")
+        })
 
+@login_required
 def create(request):
     if request.method == "POST":
         
@@ -41,16 +50,16 @@ def create(request):
             "form" : NewListingForm()
         })
 
+@login_required
 def watchlist(request):
     if request.GET.get("watch_listing"):
         if "add" in request.GET.get("watch_listing"):
             listing_id = request.GET.get("watch_listing").replace("add ", "")
-
             listing = Listing.objects.get(pk=listing_id)
 
             w = Watchlist(listing=listing, user=request.user)
             w.save()
-            return HttpResponseRedirect(reverse("listing", args=listing_id))
+            return HttpResponseRedirect(reverse("listing", args=[listing_id]))
         
         else:
             listing_id = request.GET.get("watch_listing").replace("remove ", "")
@@ -58,7 +67,7 @@ def watchlist(request):
 
             Watchlist.objects.filter(listing=listing).get(user=request.user).delete()
 
-            return HttpResponseRedirect(reverse("listing", args=listing_id))
+            return HttpResponseRedirect(reverse("listing", args=[listing_id]))
     
     else:
         return render(request, "auctions/watchlist.html", {
@@ -136,36 +145,48 @@ def listing(request, id):
             "comment_form" : comment_form
         })
 
+@login_required
 def bid(request):
     if request.method == "POST":
         bid_form = NewBidForm(request.POST)
         bid_form.save()
     return HttpResponseRedirect(reverse("index"))
 
+@login_required
 def comment(request):
     if request.method == "POST":
         comment_form = NewCommentForm(request.POST)
         comment_form.save()
         return HttpResponseRedirect(reverse("index"))
 
+@login_required
 def close(request, id):
-    if request.method == "POST":
-        listing = Listing.objects.get(pk=id)
+    if request.user == Listing.objects.get(pk=id).seller:
+        if request.method == "POST":
+            listing = Listing.objects.get(pk=id)
+            winning_bid = Bid.objects.filter(listing=id).first()
 
-        if 'close' in request.POST:
-            listing.is_active = False
-            listing.save()
+            if 'close' in request.POST:
+                if winning_bid:
+                    listing.is_active = False
+                    listing.winner = winning_bid.bidder
+                    listing.save()
+                else:
+                    listing.is_active = False
+                    listing.save()
 
-            return HttpResponseRedirect(reverse("index"))
-            
+                return HttpResponseRedirect(reverse("index"))
+                
+            else:
+                return HttpResponseRedirect(reverse("index"))
+                
         else:
-            return HttpResponseRedirect(reverse("index"))
-            
+            return render(request,"auctions/close.html", {
+                "listing" : Listing.objects.get(pk=id)
+            })
     else:
-        return render(request,"auctions/close.html", {
-            "listing" : Listing.objects.get(pk=id)
-        })
-
+        return HttpResponseRedirect(reverse("index"))
+    
 def active_check():
     listings = Listing.objects.filter(is_active = True)
 

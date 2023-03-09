@@ -17,27 +17,7 @@
     <hr>
     <div>
         {% for listing in listings %}
-        <a href="{% url 'listing' listing.id %}">
-            <div class="listing-row">
-                <div>
-                    {% if listing.image %}
-                        image
-                    {% else %}
-                        <svg width="200" height="200">       
-                            <image xlink:href="https://upload.wikimedia.org/wikipedia/commons/a/ac/No_image_available.svg" width="200" height="200"/>    
-                        </svg>
-                    {% endif %}
-                </div>
-                <div>
-                    {{ listing.title }} <br>
-                    {{ listing.description }} <br>
-                    {{ listing.seller }} <br>
-                    {{ listing.end_dateTime }}
-                </div>
-            </div>
-            <br>
-        </a>
-        <hr>
+            {% include "auctions/listing_row_template.html" %}
         {% empty %}
             <p>There are no listings in this category.</p>
     
