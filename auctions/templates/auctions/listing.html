@@ -3,126 +3,181 @@
 
 {% block body %}
 
-
-    {% if user == listing.winner %}
-        <H2>You have won the auction!</H2>
-    {% elif user == listing.seller and listing.winner %}
-        <H2>{{ listing.winner }} won your auction!</H2>
-    {% elif user == listing.seller and not listing.winner %}
-        <H2>Your item did not sell. Would you like to relist?</H2>
-    {% elif not listing.winner %}
-        <H2>Auction has ended</H2>
-    {% endif %}
-
-
-    {% if user == listing.seller and listing.is_active %}
-        <div style="float: right;">
-            <a href="{% url 'close' listing.id %}">Close Listing</a>
-        </div>
-    {% endif %}
-   
-
-    <div>
-        <div class="">
-            <div>
-                {% if listing.image %}
-                    <img src="{{ listing.image }}" width="500px" height="500px">
-                {% else %}
-                    <svg width="500" height="500">       
-                        <image xlink:href="https://upload.wikimedia.org/wikipedia/commons/a/ac/No_image_available.svg" width="500" height="500"/>    
-                    </svg>
+    <div class="listing-container">
+        
+        {% if not listing.is_active %}
+            <div class="listing-ended-title">
+                {% if user == listing.winner %}
+                    <H2>You have won the auction!</H2>
+                {% elif user == listing.seller and listing.winner %}
+                    <H2>{{ listing.winner }} won your auction!</H2>
+                {% elif user == listing.seller and not listing.winner %}
+                    <H2>Your item did not sell. Would you like to relist?</H2>
+                {% elif not listing.winner %}
+                    <H2>Auction has ended</H2>
                 {% endif %}
             </div>
-            <div>
-
-                <h2>{{listing.title}}</h2>
-                Seller: {{ listing.seller }}
-
-                <hr>
-                {% if listing.condition %}
-                    Condition: {{ listing.condition }} <br>
-                {% else %}
-                    Condition: No listed condition<br>
-                {% endif %} 
-
-                {% if listing.is_active %}
-                    Time left: {{ listing|timeremaining }} | {{  listing|format_endDateTime }}
-                {% else %}
-                    Time left: Ended
-                {% endif %}
-                <hr>
-                {% if bids.count == 1 %}
-                    Current bid: ${{ required_bid }}   [{{ bids.count }} bid]<br>
-                {% elif bids.count > 1 %}
-                    Current bid: ${{ required_bid }}   [{{ bids.count }} bids]<br>
-                {% else %}
-                    Starting Bid: ${{ required_bid }} [{{ bids.count }} bids]<br>
-                {% endif %}
-
-                {% if listing.is_active %}
-                    {% if user != listing.seller %}
-
-                        <form action="{% url 'bid' %}" method="post">
-                            {% csrf_token %}
-                            
-                            {{ bid_form }}
-                        
-                            <input type="submit", value="Place bid">
-                        </form>
+            <br>    
+        {% endif %}
+        
+    
+        {% if user == listing.seller and listing.is_active %}
+            <div class="listing-close">
+                <a href="{% url 'close' listing.id %}">Close Listing</a>
+            </div>
+        {% endif %}
+       
+        <div class="listing-content">
+            <div class="listing-auction-details">
+                <div class="listing-img-section">
+                    {% if listing.image %}
+                        <img src="{{ listing.image }}" class="listing-img">
                     {% else %}
-                        You can't bid on your own listing.
+                        <img src="https://us.123rf.com/450wm/pavelstasevich/pavelstasevich1811/pavelstasevich181101032/112815935-no-image-available-icon-flat-vector-illustration.jpg?ver=6" class="listing-img">
                     {% endif %}
-                {% else %}
-                    Auction has ended.
-                {% endif %}
-                <hr>
-                
-                <form action="{% url 'watchlist' %}" method="get">       
-                    <select name="watch_listing" onchange="this.form.submit()">
-                        {% if watched %}
-                            <option>Listing is in watchlist</option>
-                            <option value="remove {{ listing.id }}">Remove from watchlist</option>
+                </div>
+                <div class="listing-details-section">
+                    <H2>{{listing.title}}</H2>
+                    <hr class="secondary-hr">
+                    <div class="grid-2">
+                        <div class="listing-details-label">
+                            Seller:
+                        </div>
+                        <div class="listing-details-value">
+                            {{ listing.seller }}
+                        </div>
+                    </div>
+    
+                    <div class="grid-2">
+                        {% if listing.condition %}
+                            <div class="listing-details-label">
+                                Condition:
+                            </div>
+                            <div class="listing-details-value">
+                                {{ listing.condition }}
+                            </div>
                         {% else %}
-                            <option>Add to watchlist?</option>
-                            <option value="add {{ listing.id }}">Add to watchlist</option>
+                            <div class="listing-details-label">
+                                Condition:
+                            </div>
+                            <div class="listing-details-value">
+                                No listed condition.
+                            </div>
+                        {% endif %} 
+                    </div>
+
+                    <div class="grid-2">
+                        {% if listing.is_active %}
+                            <div class="listing-details-label">
+                                Time left:
+                            </div>
+                            <div class="listing-details value">
+                                {{ listing|timeremaining }} | {{  listing|format_endDateTime }}
+                            </div>
+                        {% else %}
+                            <div class="listing-details-label">
+                                Time left:
+                            </div>
+                            <div class="listing-details value">
+                                Ended
+                            </div>   
+                        {% endif %} 
+                    </div>
+                    <hr class="secondary-hr">
+                    <div class="grid-2">
+                        {% if bids.count == 1 %}
+                            <div class="listing-details-label">
+                                Current bid:
+                            </div>
+                            <div class="listing-details value">
+                                <p>${{ required_bid }} &emsp; [{{ bids.count }} bid] </p>
+                            </div>
+                        {% elif bids.count > 1 %}
+                            <div class="listing-details-label">
+                                Current bid:
+                            </div>
+                            <div class="listing-details value">
+                                <p>${{ required_bid }} &emsp; [{{ bids.count }} bids] </p>
+                            </div>
+                        {% else %}
+                            <div class="listing-details-label">
+                                Starting bid:
+                            </div>
+                            <div class="listing-details value">
+                                <p>${{ required_bid }} &emsp; [{{ bids.count }} bids] </p>
+                            </div>
                         {% endif %}
-                    </select>
-                </form>
+                    </div>
+                    
+                    <div class="listing-bid-section">
+                        {% if listing.is_active %}
+                            {% if user != listing.seller %}
+                                <form action="{% url 'bid' listing.id %}" method="post" id="bid">
+                                    {% csrf_token %}
+                                    
+                                    {{ bid_form }}
+                                
+                                    <input type="submit", value="Place bid" style="margin-top: 10px;">
+                                </form>
+                            {% else %}
+                                You can't bid on your own listing.
+                            {% endif %}
+                        {% else %}
+                            <br>
+                            Auction has ended.
+                        {% endif %}
+                    </div>
+                    <br>
+                    
+                    <form action="{% url 'watchlist' %}" method="get">       
+                        <select name="watch_listing" onchange="this.form.submit()">
+                            {% if watched %}
+                                <option>Listing is in watchlist</option>
+                                <option value="remove {{ listing.id }}">Remove from watchlist</option>
+                            {% else %}
+                                <option>Add to watchlist?</option>
+                                <option value="add {{ listing.id }}">Add to watchlist</option>
+                            {% endif %}
+                        </select>
+                    </form>
+                </div>
+            </div>
+            <hr>
+            <div>
+                <H3>Description</H3> 
+                {{ listing.description }}
+            </div>
+            <hr>
+            <div>
+                <H3>Comments</H3>
+                {% for comment in comments %}
+                    <div class="comment-row ">
+                        <div class="vl"></div>
+                        <div class="comment-area">
+                            <div class="comment">
+                                {{comment.comment_text}} 
+                            </div>
+                            <div class="comment-time">
+                                asked on {{ comment.comment_dateTime }}
+                            </div>
+                        </div>
+                    </div>
+                    <br>
+                {% empty %}
+                     Currently there are no comments. <br><br>
+                {% endfor %}
                 
+                {% if user != listing.seller %}
+                    Have a question of your own? <br>
+                    <form action="{% url 'comment' listing.id %}" method="post" id="comment">
+                        {% csrf_token %}
+                        
+                        {{ comment_form }}
+                    
+                        <input type="submit", value="Submit question">
+                    </form>
+                {% endif %}
             </div>
         </div>
-        <hr>
-        <div>
-            <H3>Description</H3> <br>
-            {{ listing.description }}
-        </div>
-        <hr>
-        <div>
-            <H3>Comments</H3>
-            {% for comment in comments %}
-                {{comment.comment_text}} <br>
-                asked on {{ comment.comment_dateTime }}
-                <hr>
-            {% empty %}
-                 Currently there are no comments. <br>
-            {% endfor %}
-            
-            {% if user != listing.seller %}
-                Have a question of your own? <br>
-                <form action="{% url 'comment' %}" method="post">
-                    {% csrf_token %}
-                    
-                    {{ comment_form }}
-                
-                    <input type="submit", value="Submit question">
-            
-                </form>
-                
-            {% endif %}
-            
-        </div>
-
-
-
     </div>
 {% endblock %}

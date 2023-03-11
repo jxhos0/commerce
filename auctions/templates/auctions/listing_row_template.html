@@ -1,25 +1,25 @@
 {% load listingtags %}
-<div class="listing-container">
+<div class="listing-card-container">
     <a href="{% url 'listing' listing.id %}">
-        <div class="listing-grid">
+        <div class="listing-card-grid">
             <div>
                 {% if listing.image %}
-                    <img src="{{ listing.image }}" class="listing-img">
+                    <img src="{{ listing.image }}" class="listing-card-img">
                 {% else %}
-                    <img src="https://us.123rf.com/450wm/pavelstasevich/pavelstasevich1811/pavelstasevich181101032/112815935-no-image-available-icon-flat-vector-illustration.jpg?ver=6" class="listing-img">
+                    <img src="https://us.123rf.com/450wm/pavelstasevich/pavelstasevich1811/pavelstasevich181101032/112815935-no-image-available-icon-flat-vector-illustration.jpg?ver=6" class="listing-card-img">
                     
                 {% endif %}
             </div>
             <div class="listing-details grid-col-span-4">
                 <H4>{{ listing.title }}</H4>
-                <div class="listing-details-sections">
-                    <div class="listing-row-description">
+                <div class="listing-card-details-section">
+                    <div class="listing-card-row-description">
                         Price: ${{ listing|current_price }}<br><br>
                         Description:<br>
                         {{ listing.description }} <br>
                     </div>
                 
-                    <div class="listing-auction-details">
+                    <div class="listing-card-auction-details">
                         {{ listing|bid_count }}               <br>
                         {% if listing.is_active %}
                             {{ listing|timeremaining }}

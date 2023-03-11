@@ -3,14 +3,18 @@
 {% block body %}
     <h2>Create Listing</h2>
 
-    <form action="{% url 'create' %}" method="post">
-        {% csrf_token %}
-        
-        {{ form.as_div }}
-      
-        <input type="submit", value="List">
-
-    </form>
+    <div class="create">
+        <form action="{% url 'create' %}" method="post" id="create">
+            <div class="grid-2-sml-gap">
+                {% csrf_token %}
+            
+                {{ form }}
+            </div>
+            <br>
+            <input type="submit", value="Create auction for the item">
+        </form>
+    </div>
+    
 
 
 {% endblock %}

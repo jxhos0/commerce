@@ -1,18 +1,77 @@
+html {
+    width: 100vw;
+    margin: auto;
+}
+
 body {
-    padding: 10px;
+    padding: 2rem;
     max-width: 1248px;
     margin: auto; 
 }
 
-label {
-    min-width: 10em;
+hr {
+    background-color: lightgray;
 }
 
-input {
-    min-width: 20em;
+#create label:not([for=id_description]) {
+    width: 15rem;
+    text-align: right;
+    margin: auto;
 }
 
-img, picture, svg {
+#create label[for=id_description] {
+    width: 15rem;
+    text-align: right;
+    padding-top: 0.4rem;
+}
+
+#create input {
+    width: 100%;
+    
+}
+
+#create input[type="submit"] {
+    display: block;
+    margin: 0 auto; 
+    width: 20rem;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+
+}
+
+#bid input {
+    width: 60%;
+    height: 2.5rem;
+}
+
+#comment textarea {
+    width: 100%;
+    height: 6rem;
+}
+
+#comment input {
+    width: 15rem;
+
+}
+
+#close input {
+    width: 15rem;
+
+}
+
+select[name="watch_listing"] {
+    display: block;
+    margin: 0 auto; 
+    width: 60%;
+    text-align: center;
+    height: 2.5rem;
+}
+
+select[name="filter"] {
+    width: 100%;
+}
+
+img, picture, image {
     max-width: 100%;
     max-height: 100%;
     display: block;
@@ -24,21 +83,46 @@ a:hover {color: black;text-decoration: none;}
 a:active {color: black;text-decoration: none;} */
 
 .secondary-hr {
-    width: 85%;
+    width: 100%;
+    margin-top: 20px; 
+    margin-bottom: 20px;
 }
 
 .grid-col-span-4 {
     grid-column: span 4;
 }
 
-.listing-grid {
+.listing-card-grid {
     display: grid;
     gap: 1rem;
     grid-template-columns: repeat(5, 1fr);
     min-height: 150px;
 }
 
-.listing-details-sections {
+.listing-card-details-section {
+    display: grid;
+    gap: 0.5rem;
+    grid-template-columns: repeat(2, 1fr);
+}
+
+.listing-card-img {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    object-fit: contain;
+}
+
+.listing-ended-title {
+    text-align: center;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+    background-color: lightgray;
+}
+
+.listing-close {
+    text-align: right;
+}
+
+.listing-auction-details {
     display: grid;
     gap: 0.5rem;
     grid-template-columns: repeat(2, 1fr);
@@ -46,6 +130,55 @@ a:active {color: black;text-decoration: none;} */
 
 .listing-img {
     width: 100%;
+    max-height: 450px;
     aspect-ratio: 1 / 1;
     object-fit: contain;
+}
+
+.grid-2 {
+    display: grid;
+    gap: 3rem;
+    grid-template-columns: 0.5fr 1fr;
+}
+
+.grid-2-sml-gap {
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: 0.25fr 1fr;
+}
+
+.listing-details-label {
+    max-width: 135px;
+    text-align: right;
+}
+
+.listing-bid-section {
+    text-align: center;
+}
+
+.comment-row {
+    display: grid;
+    gap: .01rem;
+    grid-template-columns: 0.01fr 1fr;
+}
+
+.vl {
+    border-left: 2px solid lightgray;
+    height: 100%;
+}
+
+.comment {
+    padding-bottom: .2rem;
+}
+
+.comment-time {
+    font-size: .8rem;
+}
+
+.nav-item {
+    max-width: 150px;
+}
+
+.auction-close-confirmation {
+    text-align: center;
 }

@@ -3,13 +3,17 @@
 {% block body %}
     <h2>Categories</h2>
 
-    <div style="position: relative;">
+    <div class="grid-2">
         <label>Choose a category to filter by: </label>
         <form action="{% url 'categories' %}" method="get">       
             <select name="filter" onchange="this.form.submit()">
-                <option selected disabled>-----------</option>
+                <option {% if not selected %} selected {% endif %} disabled>Choose a category</option>
                 {% for category in categories %}
-                <option value="{{ category.id }}">{{ category }}</option>
+                    {% if category.id == selected %}
+                        <option value="{{ category.id }}" selected>{{ category }}</option>
+                    {% else %}
+                        <option value="{{ category.id }}">{{ category }}</option>
+                    {% endif %}
                 {% endfor %}
             </select>
         </form>
@@ -20,10 +24,6 @@
             {% include "auctions/listing_row_template.html" %}
         {% empty %}
             <p>There are no listings in this category.</p>
-    
         {% endfor %}
-
     </div>
-
-
 {% endblock %}
