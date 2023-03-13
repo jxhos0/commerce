@@ -111,6 +111,12 @@ a:active {color: black;text-decoration: none;} */
     object-fit: contain;
 }
 
+.listing-card-row-description {
+    height: 120px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
 .listing-ended-title {
     text-align: center;
     padding-top: 0.5rem;

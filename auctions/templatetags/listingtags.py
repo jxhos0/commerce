@@ -2,7 +2,9 @@
 
 
 from django import template
-from ..models import User, Listing, Category, Watchlist, Comment, Bid
+from ..models import Listing, Bid
+
+import datetime
 
 from django.utils import timezone
 
@@ -38,11 +40,9 @@ def timeremaining(listing):
 def format_endDateTime(listing):
     end_time = Listing.objects.get(pk=listing.id).end_dateTime
 
-    td = end_time - timezone.now()
-
-    if td.days == 0:
+    if end_time.day == timezone.now().day:
         return f"Today { end_time.strftime('%H:%M') }"
-    elif td.days == 1:
+    elif end_time.day == (timezone.now() + datetime.timedelta(days=int(1))).day:
         return f"Tomorrow { end_time.strftime('%H:%M') }"
     else:
         return f"{ end_time.strftime('%d/%m %H:%M') }"

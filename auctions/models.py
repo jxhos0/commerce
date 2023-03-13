@@ -10,7 +10,7 @@ class Category(models.Model):
         verbose_name        = 'Category'
         verbose_name_plural = 'Categories'
 
-    category_name = models.CharField(max_length=50)
+    category_name = models.CharField(max_length=50, unique=True)
 
     def __str__(self):
         return f"{self.category_name}"
@@ -35,10 +35,14 @@ class Listing(models.Model):
     winner          = models.ForeignKey(User, blank=True, default=None, null=True, on_delete=models.SET_NULL, related_name="winner")
 
     def __str__(self):
-        return f"ID: {self.id}, Title: {self.title}, Description: {self.description}, Listed: {self.start_dateTime}, Ending: {self.end_dateTime}"
-    
-
-    
+        if self.is_active:
+            return f"{self.title}, sold by {self.seller} ends {self.end_dateTime.strftime('%d-%m-%Y %I:%M %p')}"
+        else:
+            if self.winner:
+                return f"{self.title}, sold by {self.seller} ended {self.end_dateTime.strftime('%d-%m-%Y %I:%M %p')} and was won by {self.winner}"
+            else:
+                return f"{self.title}, sold by {self.seller} ended {self.end_dateTime.strftime('%d-%m-%Y %I:%M %p')}"
+        
 class Bid(models.Model):
     listing         = models.ForeignKey(Listing, on_delete=models.CASCADE)
     bidder          = models.ForeignKey(User, default=None, on_delete=models.CASCADE)
@@ -46,7 +50,7 @@ class Bid(models.Model):
     bid_dateTime    = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"Bids on {self.listing} are {self.bid_amount} by {self.bidder}, placed at {self.bid_dateTime}"
+        return f"{self.bidder} bidded ${self.bid_amount} on listing '{self.listing.title}', at {self.bid_dateTime.strftime('%d-%m-%Y %I:%M %p')}"
 
 class Comment(models.Model):
     listing             = models.ForeignKey(Listing, on_delete=models.CASCADE)
@@ -54,9 +58,12 @@ class Comment(models.Model):
     comment_text        = models.TextField(default="")
     comment_dateTime    = models.DateTimeField(auto_now_add=True)
 
+    def __str__(self):
+        return f"{self.commenter} commented on listing '{self.listing.title}' at {self.comment_dateTime.strftime('%d-%m-%Y %I:%M %p')} "
+
 class Watchlist(models.Model):
     listing = models.ForeignKey(Listing, on_delete=models.CASCADE)
     user    = models.ForeignKey(User, on_delete=models.CASCADE)
 
     def __str__(self):
-        return f"Listing: {self.listing.id}, Title: {self.listing.title}, Watched by {self.user}"
+        return f"Listing '{self.listing.title}', is being watched by {self.user}"

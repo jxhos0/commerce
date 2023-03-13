@@ -7,7 +7,7 @@ class NewListingForm(forms.ModelForm):
         self.fields['category'].label = "Category (optional)"
         self.fields['condition'].label = "Condition (optional)"
         self.fields['image'].label = "Image URL (optional)"
-        self.fields['starting_price'].label = "Starting Price"
+        self.fields['starting_price'].label = "Starting Price (in $)"
         self.fields['auction_duration'].label = "Auction Duration"
 
         self.fields['title'].widget.attrs.update(placeholder="Enter listing title")
@@ -17,7 +17,6 @@ class NewListingForm(forms.ModelForm):
 
         for visible in self.visible_fields():
             visible.field.widget.attrs['class'] = 'form-control'
-            # vi sible.field.widget.attrs['placeholder'] = visible.field.label
 
     auction_duration = forms.ChoiceField(choices=(
         (1,"1 Day"),
@@ -27,9 +26,12 @@ class NewListingForm(forms.ModelForm):
         (28, "1 Month"),
     ))
 
+    category = forms.ModelChoiceField(queryset=Category.objects.order_by("category_name"))
+
     class Meta:
         model = Listing
         exclude = ['end_dateTime', 'seller', 'is_active', 'winner']
+        
         
         
     

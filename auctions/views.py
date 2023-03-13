@@ -1,6 +1,6 @@
 from django.contrib.auth import authenticate, login, logout
 from django.db import IntegrityError
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 from django.utils import timezone
@@ -10,7 +10,6 @@ from .models import User, Listing, Category, Watchlist, Comment, Bid
 from .forms import *
 
 import datetime
-
 
 def index(request):
     # Run function to check if listings are still active.
@@ -22,11 +21,24 @@ def index(request):
             "title" : "Active Listings",
             "listings" : Listing.objects.filter(is_active = True).order_by("end_dateTime")
         })
-    # Load all active listings page
+    
     else:
+        # Load all active listings page
+        if request.GET.get('id') == "all":            
+            title       = "All Listings"
+            listings    = Listing.objects.all().order_by("-end_dateTime")
+        # Load all of listings of the user
+        elif request.GET.get('id') == "my-listings":
+            title       = "My Listings"
+            listings    = Listing.objects.filter(seller=request.user).order_by("-end_dateTime")
+        # Load all of listings the user has won
+        elif request.GET.get('id') == "listings-won":
+            title       = "Won Listings"
+            listings    = Listing.objects.filter(winner=request.user).order_by("-end_dateTime")
+
         return render(request, "auctions/index.html", {
-            "title" : "All Listings",
-            "listings" : Listing.objects.all().order_by("-end_dateTime")
+            "title" : title,
+            "listings" : listings
         })
 
 @login_required
@@ -91,7 +103,6 @@ def watchlist(request):
             "watchlist" : Watchlist.objects.filter(user=request.user)
         })
     
-
 def categories(request):
     # Run function to check if listings are still active.
     active_check()
@@ -101,14 +112,14 @@ def categories(request):
         filtered_listings = Listing.objects.filter(category = category_filter)
 
         return render(request, "auctions/categories.html",   {
-            "categories"    : Category.objects.all(),
+            "categories"    : Category.objects.order_by("category_name"),
             "listings"      : filtered_listings,
             "selected"      : int(category_filter)
         })
              
     else:
         return render(request, "auctions/categories.html",   {
-            "categories"    : Category.objects.all(),
+            "categories"    : Category.objects.order_by("category_name"),
             "listings"      : Listing.objects.all()
         })
 
@@ -210,10 +221,12 @@ def close(request, id):
                     # If there is a winning bid, close the listing and set the winner to the bidder with the highest bid.
                     listing.is_active = False
                     listing.winner = winning_bid.bidder
+                    listing.end_dateTime = timezone.now()
                     listing.save()
                 except:
                     # If there is no winner, close the listing with no winner
                     listing.is_active = False
+                    listing.end_dateTime = timezone.now()
                     listing.save()
 
                 # Redirect user back to listing.
@@ -247,10 +260,12 @@ def active_check():
                 # If there is a winning bid, close the listing and set the winner to the bidder with the highest bid.
                 listing.is_active = False
                 listing.winner = winning_bid.bidder
+                listing.end_dateTime = timezone.now()
                 listing.save()
             except:
                 # If there is no winner, close the listing with no winner
                 listing.is_active = False
+                listing.end_dateTime = timezone.now()
                 listing.save()
     
 
