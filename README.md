@@ -35,4 +35,5 @@ If you want to test the site yourself, the login form is alread prefilled out wi
 Should the form not be pre-populated use the following information:
 
 User: test_account
+
 Password: test_account
