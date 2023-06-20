@@ -28,6 +28,15 @@ Django was implemented for the backend design of this website and the templates 
 
 HTML and CSS was used for the front-end design of this website, making use of grid for various elements in the website including the listing cards.
 
+## How to run the application
+To run the app the only Python package not included in a standard Python install is Django.
+
+To run the app please follow the below steps:
+
+- Run your virtual environment (if using one)
+- pip install -r requirements.txt (if you don't already have Django installed)
+- python manage.py runserver
+
 ## Testing the Site
 
 If you want to test the site yourself, the login form is alread prefilled out with a test account login details.
